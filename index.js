@@ -73,6 +73,27 @@ async function run(){
             res.send(result);
         })
 
+        app.patch('/products/:id' , async (req, res) => {
+            const id = req.params.id;
+            const isAdvertised = req.body.isAdvertised;
+            const query = { _id: ObjectId(id) }
+            const updatedDoc = {
+                $set:{
+                    isAdvertised: isAdvertised
+                }
+            }
+            const result = await productsCollection.updateOne(query, updatedDoc);
+            res.send(result);
+        })
+
+        app.get('/advertise' , async(req , res)=>{
+            const query = {
+                isAdvertised: true
+            }
+            const products = await productsCollection.find(query).toArray();
+            res.send(products);
+        })
+
         app.post('/users' , async(req , res)=>{
             const user = req.body;
             const result = await usersCollection.insertOne(user);
@@ -93,6 +114,26 @@ async function run(){
             }
             const sellers = await usersCollection.find(query).toArray();
             res.send(sellers);
+        })
+
+        app.get('/users/:email' , async(req , res)=>{
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send(user);
+        })
+
+        app.patch('/users/:id' , async (req, res) => {
+            const id = req.params.id;
+            const verified = req.body.verified;
+            const query = { _id: ObjectId(id) }
+            const updatedDoc = {
+                $set:{
+                    verified: verified
+                }
+            }
+            const result = await usersCollection.updateOne(query, updatedDoc);
+            res.send(result);
         })
 
         app.delete('/users/:id' , async(req , res)=>{
