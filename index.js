@@ -19,6 +19,7 @@ async function run(){
         const categoriesCollection = client.db('laptopResale').collection('categories');
         const productsCollection = client.db('laptopResale').collection('products');
         const bookingCollection = client.db('laptopResale').collection('bookings');
+        const usersCollection = client.db('laptopResale').collection('users');
 
         app.get('/categories' , async(req , res)=>{
            const query = {};
@@ -69,6 +70,35 @@ async function run(){
             const id = req.params.id;
             const filter = {_id:ObjectId(id)}
             const result = await productsCollection.deleteOne(filter);
+            res.send(result);
+        })
+
+        app.post('/users' , async(req , res)=>{
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.send(result);        
+        })
+
+        app.get('/buyers' , async(req , res)=>{
+            const query = {
+               role: 'buyer'
+            }
+            const buyers = await usersCollection.find(query).toArray();
+            res.send(buyers);
+        })
+        
+        app.get('/sellers' , async(req , res)=>{
+            const query = {
+               role: 'seller'
+            }
+            const sellers = await usersCollection.find(query).toArray();
+            res.send(sellers);
+        })
+
+        app.delete('/users/:id' , async(req , res)=>{
+            const id = req.params.id;
+            const filter = {_id:ObjectId(id)}
+            const result = await usersCollection.deleteOne(filter);
             res.send(result);
         })
 
