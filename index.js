@@ -43,6 +43,28 @@ async function run(){
         const usersCollection = client.db('laptopResale').collection('users');
         const paymentsCollection = client.db('laptopResale').collection('payments');
 
+        const verifyAdmin = async (req, res, next) =>{
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail };
+            const user = await usersCollection.findOne(query);
+
+            if (user?.role !== 'admin') {
+                return res.status(403).send({ message: 'forbidden access' })
+            }
+            next();
+        }
+
+        const verifySeller = async (req, res, next) =>{
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail };
+            const user = await usersCollection.findOne(query);
+
+            if (user?.role !== 'seller') {
+                return res.status(403).send({ message: 'forbidden access' })
+            }
+            next();
+        }
+
         app.get('/categories' , async(req , res)=>{
            const query = {};
            const categories = await categoriesCollection.find(query).toArray();
@@ -143,7 +165,7 @@ async function run(){
             res.send(products);
         })
 
-        app.post('/products' , async(req , res)=>{
+        app.post('/products' , verifyJWT, verifySeller, async(req , res)=>{
          const product = req.body;
          const date = new Date();
          const result = await productsCollection.insertOne({...product, time:date});
