@@ -157,7 +157,7 @@ async function run(){
             res.send(result);
         })
 
-        app.patch('/products/:id' , async (req, res) => {
+        app.patch('/advertise/:id' ,verifyJWT, async (req, res) => {
             const id = req.params.id;
             const isAdvertised = req.body.isAdvertised;
             const query = { _id: ObjectId(id) }
@@ -191,7 +191,7 @@ async function run(){
             res.send(products);
         })
 
-        app.get('/advertise' , verifyJWT, async(req , res)=>{
+        app.get('/advertise' , async(req , res)=>{
             const query = {
                 isAdvertised: true
             }
