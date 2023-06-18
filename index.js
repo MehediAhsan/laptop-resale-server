@@ -156,6 +156,12 @@ async function run(){
             res.status(403).send({accessToken: ''})
         })
 
+        app.get('/allproducts' , async(req , res)=>{
+            const query = {};
+            const allproducts = await productsCollection.find(query).toArray();
+            res.send(allproducts);      
+         })
+
         app.get('/products' , verifyJWT, async(req , res)=>{
             const email = req.query.email;
             const query = {
